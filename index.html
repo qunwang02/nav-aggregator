@@ -177,8 +177,8 @@
                     }
                 } else if (result.success) {
                     // 保存登录状态
-                    sessionStorage.setItem("authenticated", "true");
-                    sessionStorage.setItem("authTime", Date.now());
+        localStorage.setItem("authenticated", "true");
+        localStorage.setItem("authTime", Date.now());
                     if (result.sessionToken) {
                         sessionStorage.setItem("sessionToken", result.sessionToken);
                     }
