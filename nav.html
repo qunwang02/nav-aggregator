@@ -5,40 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>导航聚合页</title>
     <script>
-        // 增强版登录状态检查
         (function() {
             const isAuthenticated = sessionStorage.getItem("authenticated");
             const authTime = sessionStorage.getItem("authTime");
-            const sessionToken = sessionStorage.getItem("sessionToken");
-            
-            // 验证有效期：24 小时
             const AUTH_VALIDITY_HOURS = 24;
+            
+            // 添加调试信息（手机端可通过 chrome://inspect 查看）
+            console.log("[Debug] isAuthenticated:", isAuthenticated);
+            console.log("[Debug] authTime:", authTime);
+            console.log("[Debug] 当前时间:", Date.now());
+            
             const isValid = isAuthenticated === "true" && 
                            authTime && 
                            (Date.now() - parseInt(authTime) < AUTH_VALIDITY_HOURS * 60 * 60 * 1000);
             
+            console.log("[Debug] isValid:", isValid);
+            
             if (!isValid) {
-                // 清除所有认证信息
                 sessionStorage.removeItem("authenticated");
                 sessionStorage.removeItem("authTime");
                 sessionStorage.removeItem("sessionToken");
-                // 跳回登录页
-                window.location.href = "/";
+                // 跳回登录页，带上来源参数便于排查
+                window.location.href = "/?from=nav&reason=" + (isAuthenticated ? "expired" : "not_auth");
             }
-            
-            // 可选：定期刷新认证时间（用户活跃则延长有效期）
-            let activityTimer;
-            function refreshAuthTime() {
-                sessionStorage.setItem("authTime", Date.now());
-            }
-            
-            // 监听用户活动
-            ['click', 'touchstart', 'scroll'].forEach(event => {
-                document.addEventListener(event, function() {
-                    if (activityTimer) clearTimeout(activityTimer);
-                    activityTimer = setTimeout(refreshAuthTime, 1000);
-                });
-            });
         })();
     </script>
     <style>
@@ -201,7 +190,7 @@
     <div class="card">
         <div class="header">
             <div class="icon">📋</div>
-            <h1>信息登记入口，移动端建议用via浏览器打开</h1>
+            <h1>信息登记入口</h1>
             <div class="description">
                 请根据您的设备类型，点击下方对应链接进行信息登记
             </div>
@@ -266,13 +255,6 @@
                 sessionStorage.removeItem("sessionToken");
                 window.location.href = "/";
             }
-        }
-        
-        // 显示登录状态信息（可选）
-        const authTime = sessionStorage.getItem("authTime");
-        if (authTime) {
-            const expireTime = new Date(parseInt(authTime) + 24 * 60 * 60 * 1000);
-            console.log(`会话有效期至: ${expireTime.toLocaleString()}`);
         }
     </script>
 </body>
