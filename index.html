@@ -3,117 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聚合跳转中...</title>
+    <title>导航聚合页</title>
     <style>
-        body {
+        * {
             margin: 0;
-            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             padding: 20px;
         }
-        .container {
-            text-align: center;
+        .card {
             background: white;
             border-radius: 32px;
-            padding: 48px 32px;
-            max-width: 360px;
+            max-width: 500px;
             width: 100%;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            padding: 40px 24px 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
-        .spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid #e5e7eb;
-            border-top-color: #667eea;
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .icon {
+            width: 64px;
+            height: 64px;
+            background: #f0f0f0;
             border-radius: 50%;
-            margin: 0 auto 24px;
-            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .title {
-            font-size: 18px;
+        h1 {
+            font-size: 24px;
             font-weight: 600;
             color: #1f2937;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
-        .desc {
-            font-size: 14px;
+        .description {
             color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
         }
-        .manual-link {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #f3f4f6;
-            font-size: 13px;
+        .section {
+            margin-bottom: 28px;
         }
-        .manual-link a {
-            color: #667eea;
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title span {
+            background: #e5e7eb;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 12px;
+            font-weight: normal;
+        }
+        .link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f9fafb;
+            border-radius: 60px;
+            padding: 12px 20px;
             text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e7eb;
         }
-        .via-tip {
+        .link-item:hover {
+            background: #667eea;
+            border-color: #667eea;
+            transform: scale(1.02);
+        }
+        .link-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .link-emoji {
+            font-size: 20px;
+        }
+        .link-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        .link-item:hover .link-name {
+            color: white;
+        }
+        .link-arrow {
+            color: #9ca3af;
+            font-size: 18px;
+        }
+        .link-item:hover .link-arrow {
+            color: white;
+        }
+        .via-banner {
             background: #fef3c7;
-            border-radius: 16px;
-            padding: 12px 16px;
-            margin-top: 20px;
+            border-radius: 20px;
+            padding: 14px 18px;
+            margin-top: 8px;
+            border-left: 4px solid #f59e0b;
+        }
+        .via-banner p {
             font-size: 13px;
             color: #92400e;
+            margin-bottom: 8px;
         }
-        .via-tip a {
+        .via-banner a {
             color: #d97706;
-            font-weight: 500;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .via-banner a:hover {
+            text-decoration: underline;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            padding-top: 24px;
+            margin-top: 8px;
+            border-top: 1px solid #f3f4f6;
+        }
+        .badge {
+            display: inline-block;
+            background: #e5e7eb;
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: normal;
+            margin-left: 8px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="spinner"></div>
-        <div class="title">正在识别设备，请稍候...</div>
-        <div class="desc">自动跳转中，如无反应请点击下方链接</div>
-        <div class="manual-link" id="manualLink"></div>
-        <div class="via-tip" id="viaTip" style="display:none;">
-            💡 强烈建议使用 <a href="https://viayoo.com/zh-cn/" target="_blank">Via浏览器</a> 打开，体验更佳<br>
-            <span style="font-size:12px;">↑ 点击下载 Via 浏览器 ↑</span>
+    <div class="card">
+        <div class="header">
+            <div class="icon">📋</div>
+            <h1>信息登记入口</h1>
+            <h1>信息登记，建议用via浏览器打开</h1>
+            <div class="description">
+                请根据您的设备类型，点击下方对应链接进行信息登记
+            </div>
+        </div>
+
+        <!-- 链接区域 -->
+        <div class="section">
+            <div class="section-title">
+                📱 手机端入口 <span>推荐</span>
+            </div>
+            <div class="link-list">
+                <a href="https://zh.fosheng.qzz.io/mobile.html" class="link-item" target="_blank">
+                    <div class="link-left">
+                        <span class="link-emoji">📱</span>
+                        <span class="link-name">信息登记表 · 手机版</span>
+                    </div>
+                    <span class="link-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                💻 电脑端入口
+            </div>
+            <div class="link-list">
+                <a href="https://zh.fosheng.qzz.io/" class="link-item" target="_blank">
+                    <div class="link-left">
+                        <span class="link-emoji">🖥️</span>
+                        <span class="link-name">信息登记表 · 电脑版</span>
+                    </div>
+                    <span class="link-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Via浏览器推荐区域 -->
+        <div class="section">
+            <div class="section-title">
+                🌐 浏览器建议
+            </div>
+            <div class="via-banner">
+                <p>💡 强烈建议使用 Via 浏览器打开，体验更佳、速度更快</p>
+                <a href="https://viayoo.com/zh-cn/" target="_blank">⬇️ 点击下载 Via 浏览器（免费 · 仅2MB）</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            扫码访问 · 手动选择入口
         </div>
     </div>
-
-    <script>
-        (function() {
-            // ========== 配置区域 ==========
-            const PC_URL = "https://zh.fosheng.qzz.io/";                    // 电脑版
-            const MOBILE_URL = "https://zh.fosheng.qzz.io/mobile.html";    // 手机版
-            const VIA_DOWNLOAD_URL = "https://viayoo.com/zh-cn/";           // Via下载页
-            // =============================
-
-            const userAgent = navigator.userAgent || "";
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(userAgent);
-            
-            // 检测是否在 Via 浏览器中
-            const isVia = userAgent.toLowerCase().indexOf("via") > -1;
-            
-            // 目标跳转地址
-            let targetUrl = isMobile ? MOBILE_URL : PC_URL;
-            
-            // 显示手动备用链接
-            const manualDiv = document.getElementById("manualLink");
-            manualDiv.innerHTML = '如果未自动跳转，请点击：<a href="' + targetUrl + '">' + (isMobile ? "手机版入口" : "电脑版入口") + '</a>';
-            
-            // Via 提示：仅在手机端且不是 Via 浏览器时显示
-            const viaTip = document.getElementById("viaTip");
-            if (isMobile && !isVia) {
-                viaTip.style.display = "block";
-            }
-            
-            // 延迟跳转（给用户看提示）
-            setTimeout(function() {
-                window.location.href = targetUrl;
-            }, 1500);
-        })();
-    </script>
 </body>
 </html>
