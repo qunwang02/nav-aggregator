@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>导航聚合页</title>
+    <title>验证访问</title>
     <style>
         * {
             margin: 0;
@@ -22,194 +22,243 @@
         .card {
             background: white;
             border-radius: 32px;
-            max-width: 500px;
+            max-width: 400px;
             width: 100%;
-            padding: 40px 24px 32px;
+            padding: 40px 28px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        .header {
             text-align: center;
-            margin-bottom: 32px;
         }
-        .icon {
-            width: 64px;
-            height: 64px;
-            background: #f0f0f0;
-            border-radius: 50%;
-            margin: 0 auto 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
+        .lock-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
         }
-        h1 {
+        h2 {
             font-size: 24px;
             font-weight: 600;
-            color: #1f2937;
             margin-bottom: 8px;
+            color: #1f2937;
         }
-        .description {
+        .sub {
             color: #6b7280;
             font-size: 14px;
-            line-height: 1.5;
+            margin-bottom: 32px;
         }
-        .section {
-            margin-bottom: 28px;
+        .input-group {
+            margin-bottom: 24px;
+            text-align: left;
         }
-        .section-title {
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 60px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 60px;
             font-size: 16px;
             font-weight: 600;
-            color: #374151;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.1s;
         }
-        .section-title span {
-            background: #e5e7eb;
-            border-radius: 20px;
-            padding: 2px 10px;
-            font-size: 12px;
-            font-weight: normal;
+        button:active {
+            transform: scale(0.98);
         }
-        .link-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
-        .link-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f9fafb;
-            border-radius: 60px;
-            padding: 12px 20px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border: 1px solid #e5e7eb;
-        }
-        .link-item:hover {
-            background: #667eea;
-            border-color: #667eea;
-            transform: scale(1.02);
-        }
-        .link-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .link-emoji {
-            font-size: 20px;
-        }
-        .link-name {
-            font-weight: 500;
-            color: #1f2937;
-        }
-        .link-item:hover .link-name {
-            color: white;
-        }
-        .link-arrow {
-            color: #9ca3af;
-            font-size: 18px;
-        }
-        .link-item:hover .link-arrow {
-            color: white;
-        }
-        .via-banner {
-            background: #fef3c7;
-            border-radius: 20px;
-            padding: 14px 18px;
-            margin-top: 8px;
-            border-left: 4px solid #f59e0b;
-        }
-        .via-banner p {
+        .error {
+            color: #ef4444;
             font-size: 13px;
-            color: #92400e;
-            margin-bottom: 8px;
+            margin-top: 16px;
+            display: none;
+            background: #fef2f2;
+            padding: 10px;
+            border-radius: 12px;
         }
-        .via-banner a {
-            color: #d97706;
-            font-weight: 600;
-            text-decoration: none;
+        .warning {
+            color: #f59e0b;
+            font-size: 13px;
+            margin-top: 16px;
+            display: none;
+            background: #fffbeb;
+            padding: 10px;
+            border-radius: 12px;
         }
-        .via-banner a:hover {
-            text-decoration: underline;
-        }
-        .footer {
-            text-align: center;
-            font-size: 12px;
+        .hint {
             color: #9ca3af;
-            padding-top: 24px;
-            margin-top: 8px;
+            font-size: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
             border-top: 1px solid #f3f4f6;
         }
-        .badge {
+        .loading {
             display: inline-block;
-            background: #e5e7eb;
-            border-radius: 12px;
-            padding: 4px 10px;
-            font-size: 11px;
-            font-weight: normal;
-            margin-left: 8px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .countdown {
+            font-weight: bold;
+            color: #dc2626;
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="header">
-            <div class="icon">📋</div>
-            <h1>信息登记入口</h1>
-            <h1>信息登记，建议用via浏览器打开</h1>
-            <div class="description">
-                请根据您的设备类型，点击下方对应链接进行信息登记
-            </div>
+        <div class="lock-icon">🔐</div>
+        <h2>验证访问</h2>
+        <div class="sub">请输入密码查看导航页</div>
+        <div class="input-group">
+            <input type="password" id="passwordInput" placeholder="请输入密码" autocomplete="off">
         </div>
-
-        <!-- 链接区域 -->
-        <div class="section">
-            <div class="section-title">
-                📱 手机端入口 <span>推荐</span>
-            </div>
-            <div class="link-list">
-                <a href="https://zh.fosheng.qzz.io/mobile.html" class="link-item" target="_blank">
-                    <div class="link-left">
-                        <span class="link-emoji">📱</span>
-                        <span class="link-name">信息登记表 · 手机版</span>
-                    </div>
-                    <span class="link-arrow">→</span>
-                </a>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">
-                💻 电脑端入口
-            </div>
-            <div class="link-list">
-                <a href="https://zh.fosheng.qzz.io/" class="link-item" target="_blank">
-                    <div class="link-left">
-                        <span class="link-emoji">🖥️</span>
-                        <span class="link-name">信息登记表 · 电脑版</span>
-                    </div>
-                    <span class="link-arrow">→</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Via浏览器推荐区域 -->
-        <div class="section">
-            <div class="section-title">
-                🌐 浏览器建议
-            </div>
-            <div class="via-banner">
-                <p>💡 强烈建议使用 Via 浏览器打开，体验更佳、速度更快</p>
-                <a href="https://viayoo.com/zh-cn/" target="_blank">⬇️ 点击下载 Via 浏览器（免费 · 仅2MB）</a>
-            </div>
-        </div>
-
-        <div class="footer">
-            扫码访问 · 手动选择入口
-        </div>
+        <button id="submitBtn" onclick="verifyPassword()">确认</button>
+        <div class="error" id="errorMsg"></div>
+        <div class="warning" id="warningMsg"></div>
+        <div class="hint">🔒 请联系管理员获取密码<br>⚠️ 连续5次错误将锁定1小时</div>
     </div>
+
+    <script>
+        let lockoutTimer = null;
+        
+        async function verifyPassword() {
+            // 清除之前的定时器
+            if (lockoutTimer) clearTimeout(lockoutTimer);
+            
+            const inputEl = document.getElementById("passwordInput");
+            const errorEl = document.getElementById("errorMsg");
+            const warningEl = document.getElementById("warningMsg");
+            const submitBtn = document.getElementById("submitBtn");
+            const password = inputEl.value.trim();
+            
+            // 清除之前的错误提示
+            errorEl.style.display = "none";
+            warningEl.style.display = "none";
+            errorEl.textContent = "";
+            warningEl.textContent = "";
+            
+            if (!password) {
+                errorEl.textContent = "请输入密码";
+                errorEl.style.display = "block";
+                return;
+            }
+            
+            // 显示加载状态
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading"></span> 验证中...';
+            
+            try {
+                const response = await fetch("/api/verify", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ password: password })
+                });
+                
+                const result = await response.json();
+                
+                if (response.status === 429) {
+                    // 限流锁定
+                    errorEl.textContent = result.message;
+                    errorEl.style.display = "block";
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = "确认";
+                    
+                    // 如果有剩余锁定时间，显示倒计时
+                    if (result.remainingLockout) {
+                        startLockoutCountdown(result.remainingLockout);
+                    }
+                } else if (result.success) {
+                    // 保存登录状态和 session token
+                    sessionStorage.setItem("authenticated", "true");
+                    sessionStorage.setItem("authTime", Date.now());
+                    if (result.sessionToken) {
+                        sessionStorage.setItem("sessionToken", result.sessionToken);
+                    }
+                    // 跳转到导航页
+                    window.location.href = "/nav.html";
+                } else {
+                    // 密码错误
+                    errorEl.textContent = result.message || "密码错误，请重试";
+                    errorEl.style.display = "block";
+                    
+                    // 显示剩余尝试次数警告
+                    if (result.remainingAttempts !== undefined && result.remainingAttempts <= 2) {
+                        warningEl.textContent = `⚠️ 警告：还剩 ${result.remainingAttempts} 次尝试机会，超过将锁定1小时`;
+                        warningEl.style.display = "block";
+                    }
+                    
+                    inputEl.value = "";
+                    inputEl.focus();
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = "确认";
+                }
+            } catch (error) {
+                console.error("请求错误:", error);
+                errorEl.textContent = "网络错误，请稍后重试";
+                errorEl.style.display = "block";
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = "确认";
+            }
+        }
+        
+        function startLockoutCountdown(minutes) {
+            const submitBtn = document.getElementById("submitBtn");
+            const errorEl = document.getElementById("errorMsg");
+            let remainingSeconds = minutes * 60;
+            
+            const timer = setInterval(() => {
+                if (remainingSeconds <= 0) {
+                    clearInterval(timer);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = "确认";
+                    errorEl.textContent = "锁定已解除，请重试";
+                    setTimeout(() => {
+                        if (errorEl.textContent === "锁定已解除，请重试") {
+                            errorEl.style.display = "none";
+                        }
+                    }, 3000);
+                } else {
+                    const mins = Math.floor(remainingSeconds / 60);
+                    const secs = remainingSeconds % 60;
+                    submitBtn.innerHTML = `已锁定 ${mins}:${secs.toString().padStart(2, '0')}`;
+                    remainingSeconds--;
+                }
+            }, 1000);
+            
+            lockoutTimer = timer;
+        }
+        
+        // 按回车键也可以确认
+        document.getElementById("passwordInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                verifyPassword();
+            }
+        });
+        
+        // 页面加载时聚焦输入框
+        document.getElementById("passwordInput").focus();
+    </script>
 </body>
 </html>
