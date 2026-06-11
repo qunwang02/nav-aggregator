@@ -6,8 +6,8 @@
     <title>导航聚合页</title>
     <script>
         (function() {
-            const isAuthenticated = sessionStorage.getItem("authenticated");
-            const authTime = sessionStorage.getItem("authTime");
+        const isAuthenticated = localStorage.getItem("authenticated");
+        const authTime = localStorage.getItem("authTime");
             const AUTH_VALIDITY_HOURS = 24;
             
             // 添加调试信息（手机端可通过 chrome://inspect 查看）
@@ -249,10 +249,10 @@
 
     <script>
         function logout() {
-            if (confirm("确定要退出登录吗？下次访问需要重新输入密码。")) {
-                sessionStorage.removeItem("authenticated");
-                sessionStorage.removeItem("authTime");
-                sessionStorage.removeItem("sessionToken");
+            if (confirm("确定要退出登录吗？")) {
+                localStorage.removeItem("authenticated");
+                localStorage.removeItem("authTime");
+                localStorage.removeItem("sessionToken");
                 window.location.href = "/";
             }
         }
