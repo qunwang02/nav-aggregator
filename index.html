@@ -118,10 +118,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        .countdown {
-            font-weight: bold;
-            color: #dc2626;
-        }
     </style>
 </head>
 <body>
@@ -142,7 +138,6 @@
         let lockoutTimer = null;
         
         async function verifyPassword() {
-            // 清除之前的定时器
             if (lockoutTimer) clearTimeout(lockoutTimer);
             
             const inputEl = document.getElementById("passwordInput");
@@ -151,11 +146,8 @@
             const submitBtn = document.getElementById("submitBtn");
             const password = inputEl.value.trim();
             
-            // 清除之前的错误提示
             errorEl.style.display = "none";
             warningEl.style.display = "none";
-            errorEl.textContent = "";
-            warningEl.textContent = "";
             
             if (!password) {
                 errorEl.textContent = "请输入密码";
@@ -163,59 +155,48 @@
                 return;
             }
             
-            // 显示加载状态
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="loading"></span> 验证中...';
             
             try {
                 const response = await fetch("/api/verify", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ password: password })
                 });
                 
                 const result = await response.json();
                 
                 if (response.status === 429) {
-                    // 限流锁定
                     errorEl.textContent = result.message;
                     errorEl.style.display = "block";
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = "确认";
-                    
-                    // 如果有剩余锁定时间，显示倒计时
                     if (result.remainingLockout) {
                         startLockoutCountdown(result.remainingLockout);
                     }
                 } else if (result.success) {
-                    // 保存登录状态和 session token
+                    // 保存登录状态
                     sessionStorage.setItem("authenticated", "true");
                     sessionStorage.setItem("authTime", Date.now());
                     if (result.sessionToken) {
                         sessionStorage.setItem("sessionToken", result.sessionToken);
                     }
-                    // 跳转到导航页
-                    window.location.href = "/nav.html";
+                    // 【关键修改】使用 replace 并添加时间戳，防止缓存问题
+                    window.location.replace("/nav.html?t=" + Date.now());
                 } else {
-                    // 密码错误
                     errorEl.textContent = result.message || "密码错误，请重试";
                     errorEl.style.display = "block";
-                    
-                    // 显示剩余尝试次数警告
                     if (result.remainingAttempts !== undefined && result.remainingAttempts <= 2) {
                         warningEl.textContent = `⚠️ 警告：还剩 ${result.remainingAttempts} 次尝试机会，超过将锁定1小时`;
                         warningEl.style.display = "block";
                     }
-                    
                     inputEl.value = "";
                     inputEl.focus();
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = "确认";
                 }
             } catch (error) {
-                console.error("请求错误:", error);
                 errorEl.textContent = "网络错误，请稍后重试";
                 errorEl.style.display = "block";
                 submitBtn.disabled = false;
@@ -225,20 +206,12 @@
         
         function startLockoutCountdown(minutes) {
             const submitBtn = document.getElementById("submitBtn");
-            const errorEl = document.getElementById("errorMsg");
             let remainingSeconds = minutes * 60;
-            
             const timer = setInterval(() => {
                 if (remainingSeconds <= 0) {
                     clearInterval(timer);
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = "确认";
-                    errorEl.textContent = "锁定已解除，请重试";
-                    setTimeout(() => {
-                        if (errorEl.textContent === "锁定已解除，请重试") {
-                            errorEl.style.display = "none";
-                        }
-                    }, 3000);
                 } else {
                     const mins = Math.floor(remainingSeconds / 60);
                     const secs = remainingSeconds % 60;
@@ -246,18 +219,13 @@
                     remainingSeconds--;
                 }
             }, 1000);
-            
             lockoutTimer = timer;
         }
         
-        // 按回车键也可以确认
         document.getElementById("passwordInput").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") {
-                verifyPassword();
-            }
+            if (e.key === "Enter") verifyPassword();
         });
         
-        // 页面加载时聚焦输入框
         document.getElementById("passwordInput").focus();
     </script>
 </body>
